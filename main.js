@@ -1,4 +1,3 @@
-import TinyPine from 'tinypine';
 import { marked } from 'marked'
 import hljs from 'highlight.js'
 
@@ -146,7 +145,7 @@ window.app = function() {
       const contentDiv = document.getElementById('markdown-content')
 
       try {
-        const response = await fetch(`/docs/${path}.md`)
+        const response = await fetch(`./docs/${path}.md`)
 
         if (!response.ok) {
           throw new Error('Document not found')
@@ -242,7 +241,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Now that window.app is defined, initialize TinyPine
-  TinyPine.init();
+  if (window.TinyPine) {
+    window.TinyPine.init();
+  }
 
   // Wait a moment for TinyPine to process directives, then trigger app init
   setTimeout(() => {
