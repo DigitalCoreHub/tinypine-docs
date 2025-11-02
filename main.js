@@ -1,3 +1,5 @@
+import './style.css'
+
 // Configure marked with syntax highlighting
 marked.setOptions({
   highlight: function(code, lang) {
