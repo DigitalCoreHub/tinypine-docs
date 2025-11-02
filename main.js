@@ -1,6 +1,3 @@
-import { marked } from 'marked'
-import hljs from 'highlight.js'
-
 // Configure marked with syntax highlighting
 marked.setOptions({
   highlight: function(code, lang) {
