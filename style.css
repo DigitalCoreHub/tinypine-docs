@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply antialiased;
+  }
+}
+
+@layer components {
+  /* Sidebar styles */
+  .sidebar-link {
+    @apply block px-4 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-pine-50 dark:hover:bg-pine-900/30 transition-colors;
+  }
+
+  .sidebar-link.active {
+    @apply bg-pine-100 dark:bg-pine-900/50 text-pine-800 dark:text-pine-300 font-medium;
+  }
+
+  /* Code block styles */
+  pre {
+    @apply rounded-lg my-4 overflow-x-auto;
+  }
+
+  pre code {
+    @apply text-sm;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    @apply w-2 h-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-100 dark:bg-gray-800;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400 dark:bg-gray-500;
+  }
+}
