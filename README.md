@@ -40,21 +40,16 @@ Or push to the `main` branch and GitHub Actions will automatically deploy.
 
 ### Base URL
 
-The project uses `/tinypine-docs/` as the base URL for GitHub Pages by default. If you're deploying to:
+The project uses `/` (root) as the base URL by default. If you're deploying to:
 
-- **GitHub Pages with different repo name**: Set `BASE_URL` environment variable
+- **GitHub Pages subdirectory** (e.g., `username.github.io/repo-name/`): Set `BASE_URL` environment variable
   ```bash
-  BASE_URL=/your-repo-name/ npm run build
+  BASE_URL=/repo-name/ npm run build
   ```
 
-- **Custom domain or root path**: Use `/` as base
+- **Custom domain or root deployment** (default): No need to change anything
   ```bash
-  BASE_URL=/ npm run build
-  ```
-
-- **Subdirectory**: Specify your path
-  ```bash
-  BASE_URL=/subdirectory/ npm run build
+  npm run build
   ```
 
 ### GitHub Pages Setup

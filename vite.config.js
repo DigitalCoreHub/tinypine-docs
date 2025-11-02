@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 
-// Use BASE_URL env variable if provided, otherwise use tinypine-docs for production
-const base = process.env.BASE_URL || (process.env.NODE_ENV === 'production' ? '/tinypine-docs/' : '/')
+// Use BASE_URL env variable if provided, otherwise use root path for production
+const base = process.env.BASE_URL || '/'
 
 export default defineConfig({
   base,
