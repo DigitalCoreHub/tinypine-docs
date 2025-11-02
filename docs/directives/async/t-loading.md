@@ -20,13 +20,9 @@ The `t-loading` directive shows content only during async operations. It automat
 ```
 
 <div t-data="{
-  loading: false,
-  startLoading() {
-    this.loading = true
-    setTimeout(() => { this.loading = false }, 2000)
-  }
+  loading: false
 }" class="p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 my-6 space-y-3">
-  <button t-click="startLoading()" :disabled="loading" class="px-6 py-2 bg-pine-600 text-white rounded-lg hover:bg-pine-700 disabled:opacity-50">
+  <button t-click="(function(){ loading = true; setTimeout(() => { loading = false }, 2000) })()" :disabled="loading" class="px-6 py-2 bg-pine-600 text-white rounded-lg hover:bg-pine-700 disabled:opacity-50">
     <span t-show="!loading">Start Loading</span>
     <span t-show="loading">Loading...</span>
   </button>
@@ -93,20 +89,9 @@ Show placeholder content while loading:
 
 <div t-data="{
   loading: false,
-  data: null,
-  async loadContent() {
-    this.loading = true
-    this.data = null
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    this.data = {
-      title: 'Article Title',
-      author: 'John Doe',
-      content: 'This is the article content that was loaded from the server.'
-    }
-    this.loading = false
-  }
-}" t-init="$context.loadContent()" class="p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 my-6 space-y-4">
-  <button t-click="loadContent()" :disabled="loading" class="px-4 py-2 bg-pine-600 text-white rounded-lg hover:bg-pine-700 disabled:opacity-50">
+  data: null
+}" t-init="(async function(){ loading = true; data = null; await new Promise(resolve => setTimeout(resolve, 2000)); data = { title: 'Article Title', author: 'John Doe', content: 'This is the article content that was loaded from the server.' }; loading = false; })()" class="p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 my-6 space-y-4">
+  <button t-click="(async function(){ loading = true; data = null; await new Promise(resolve => setTimeout(resolve, 2000)); data = { title: 'Article Title', author: 'John Doe', content: 'This is the article content that was loaded from the server.' }; loading = false; })()" :disabled="loading" class="px-4 py-2 bg-pine-600 text-white rounded-lg hover:bg-pine-700 disabled:opacity-50">
     Reload
   </button>
 
@@ -151,18 +136,9 @@ Show loading progress:
 
 <div t-data="{
   progress: 0,
-  loading: false,
-  async load() {
-    this.loading = true
-    this.progress = 0
-    for (let i = 0; i <= 100; i += 10) {
-      await new Promise(resolve => setTimeout(resolve, 150))
-      this.progress = i
-    }
-    this.loading = false
-  }
+  loading: false
 }" class="p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 my-6 space-y-4">
-  <button t-click="load()" :disabled="loading" class="px-6 py-2 bg-pine-600 text-white rounded-lg hover:bg-pine-700 disabled:opacity-50">
+  <button t-click="(async function(){ loading = true; progress = 0; for (let i = 0; i <= 100; i += 10) { await new Promise(resolve => setTimeout(resolve, 150)); progress = i; } loading = false; })()" :disabled="loading" class="px-6 py-2 bg-pine-600 text-white rounded-lg hover:bg-pine-700 disabled:opacity-50">
     <span t-show="!loading">Start Loading</span>
     <span t-show="loading">Loading...</span>
   </button>
@@ -206,18 +182,9 @@ Show loading progress:
 <div t-data="{
   step: 0,
   loading: false,
-  messages: ['🔌 Connecting to server...', '📦 Loading data...', '⚙️ Processing...', '✨ Almost done...'],
-  async load() {
-    this.loading = true
-    for (let i = 0; i < this.messages.length; i++) {
-      this.step = i
-      await new Promise(resolve => setTimeout(resolve, 1200))
-    }
-    this.loading = false
-    this.step = 0
-  }
+  messages: ['🔌 Connecting to server...', '📦 Loading data...', '⚙️ Processing...', '✨ Almost done...']
 }" class="p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 my-6 space-y-4">
-  <button t-click="load()" :disabled="loading" class="px-6 py-2 bg-pine-600 text-white rounded-lg hover:bg-pine-700 disabled:opacity-50">
+  <button t-click="(async function(){ loading = true; for (let i = 0; i < messages.length; i++) { step = i; await new Promise(resolve => setTimeout(resolve, 1200)); } loading = false; step = 0; })()" :disabled="loading" class="px-6 py-2 bg-pine-600 text-white rounded-lg hover:bg-pine-700 disabled:opacity-50">
     Start Process
   </button>
 
@@ -246,17 +213,9 @@ Show loading state inline with content:
 
 <div t-data="{
   saving: false,
-  saved: false,
-  async save() {
-    this.saving = true
-    this.saved = false
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    this.saving = false
-    this.saved = true
-    setTimeout(() => { this.saved = false }, 2000)
-  }
+  saved: false
 }" class="p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 my-6 space-y-3">
-  <button t-click="save()" :disabled="saving" class="px-6 py-3 bg-pine-600 text-white rounded-lg hover:bg-pine-700 disabled:opacity-50 flex items-center gap-2">
+  <button t-click="(async function(){ saving = true; saved = false; await new Promise(resolve => setTimeout(resolve, 1500)); saving = false; saved = true; setTimeout(() => { saved = false }, 2000); })()" :disabled="saving" class="px-6 py-3 bg-pine-600 text-white rounded-lg hover:bg-pine-700 disabled:opacity-50 flex items-center gap-2">
     <div t-show="saving" class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
     <span t-show="!saving && !saved">💾 Save Changes</span>
     <span t-show="saving">Saving...</span>
@@ -290,17 +249,9 @@ Disable buttons during loading:
 
 <div t-data="{
   submitting: false,
-  success: false,
-  async submit() {
-    this.submitting = true
-    this.success = false
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    this.submitting = false
-    this.success = true
-    setTimeout(() => { this.success = false }, 3000)
-  }
+  success: false
 }" class="p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 my-6 space-y-3">
-  <button t-click="submit()" :disabled="submitting" class="w-full px-6 py-3 bg-pine-600 text-white rounded-lg hover:bg-pine-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium flex items-center justify-center gap-2">
+  <button t-click="(async function(){ submitting = true; success = false; await new Promise(resolve => setTimeout(resolve, 2000)); submitting = false; success = true; setTimeout(() => { success = false }, 3000); })()" :disabled="submitting" class="w-full px-6 py-3 bg-pine-600 text-white rounded-lg hover:bg-pine-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium flex items-center justify-center gap-2">
     <div t-show="submitting" class="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
     <span t-show="!submitting && !success">Submit Form</span>
     <span t-show="submitting">Submitting...</span>
@@ -343,26 +294,14 @@ Handle multiple async operations:
   loadingUsers: false,
   loadingPosts: false,
   users: null,
-  posts: null,
-  async loadUsers() {
-    this.loadingUsers = true
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    this.users = ['Alice', 'Bob', 'Charlie']
-    this.loadingUsers = false
-  },
-  async loadPosts() {
-    this.loadingPosts = true
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    this.posts = ['Post 1', 'Post 2', 'Post 3']
-    this.loadingPosts = false
-  }
+  posts: null
 }" class="p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 my-6 space-y-4">
   <div class="flex gap-2">
-    <button t-click="loadUsers()" :disabled="loadingUsers" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50">
+    <button t-click="(async function(){ loadingUsers = true; await new Promise(resolve => setTimeout(resolve, 1500)); users = ['Alice', 'Bob', 'Charlie']; loadingUsers = false; })()" :disabled="loadingUsers" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50">
       <span t-show="!loadingUsers">Load Users</span>
       <span t-show="loadingUsers">Loading...</span>
     </button>
-    <button t-click="loadPosts()" :disabled="loadingPosts" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50">
+    <button t-click="(async function(){ loadingPosts = true; await new Promise(resolve => setTimeout(resolve, 2000)); posts = ['Post 1', 'Post 2', 'Post 3']; loadingPosts = false; })()" :disabled="loadingPosts" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50">
       <span t-show="!loadingPosts">Load Posts</span>
       <span t-show="loadingPosts">Loading...</span>
     </button>

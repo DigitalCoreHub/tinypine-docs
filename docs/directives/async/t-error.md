@@ -34,30 +34,13 @@ The `t-error` directive displays content when an error occurs during async opera
 
 <div t-data="{
   error: null,
-  loading: false,
-  async fetch(shouldFail) {
-    this.loading = true
-    this.error = null
-    try {
-      const url = shouldFail
-        ? 'https://jsonplaceholder.typicode.com/invalid'
-        : 'https://jsonplaceholder.typicode.com/todos/1'
-      const res = await fetch(url)
-      if (!res.ok) throw new Error('Failed to fetch data')
-      const data = await res.json()
-      alert('Success! Loaded: ' + data.title)
-    } catch (err) {
-      this.error = err.message
-    } finally {
-      this.loading = false
-    }
-  }
+  loading: false
 }" class="p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 my-6 space-y-3">
   <div class="flex gap-2">
-    <button t-click="fetch(false)" :disabled="loading" class="px-4 py-2 bg-pine-600 text-white rounded-lg hover:bg-pine-700 disabled:opacity-50">
+    <button t-click="(async function(){ loading = true; error = null; try { const url = 'https://jsonplaceholder.typicode.com/todos/1'; const res = await fetch(url); if (!res.ok) throw new Error('Failed to fetch data'); const data = await res.json(); alert('Success! Loaded: ' + data.title); } catch (err) { error = err.message; } finally { loading = false; } })()" :disabled="loading" class="px-4 py-2 bg-pine-600 text-white rounded-lg hover:bg-pine-700 disabled:opacity-50">
       Load Data (Success)
     </button>
-    <button t-click="fetch(true)" :disabled="loading" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50">
+    <button t-click="(async function(){ loading = true; error = null; try { const url = 'https://jsonplaceholder.typicode.com/invalid'; const res = await fetch(url); if (!res.ok) throw new Error('Failed to fetch data'); const data = await res.json(); alert('Success! Loaded: ' + data.title); } catch (err) { error = err.message; } finally { loading = false; } })()" :disabled="loading" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50">
       Load Data (Error)
     </button>
   </div>
@@ -156,44 +139,16 @@ The `t-error` directive displays content when an error occurs during async opera
 <div t-data="{
   error: null,
   loading: false,
-  errorType: null,
-  async fetch(type) {
-    this.loading = true
-    this.error = null
-    this.errorType = type
-    try {
-      if (type === 'timeout') {
-        const controller = new AbortController()
-        setTimeout(() => controller.abort(), 100)
-        await fetch('https://httpstat.us/200?sleep=5000', {
-          signal: controller.signal
-        })
-      } else if (type === 'network') {
-        await fetch('https://invalid-domain-that-does-not-exist-12345.com')
-      } else {
-        await fetch('https://jsonplaceholder.typicode.com/invalid')
-      }
-    } catch (err) {
-      if (err.name === 'AbortError') {
-        this.error = '⏱️ Request timed out after 5 seconds'
-      } else if (err.name === 'TypeError') {
-        this.error = '🌐 Network error - check your connection'
-      } else {
-        this.error = '❌ ' + err.message
-      }
-    } finally {
-      this.loading = false
-    }
-  }
+  errorType: null
 }" class="p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 my-6 space-y-3">
   <div class="flex gap-2">
-    <button t-click="fetch('timeout')" :disabled="loading" class="px-3 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 text-sm">
+    <button t-click="(async function(){ loading = true; error = null; errorType = 'timeout'; try { const controller = new AbortController(); setTimeout(() => controller.abort(), 100); await fetch('https://httpstat.us/200?sleep=5000', { signal: controller.signal }); } catch (err) { if (err.name === 'AbortError') { error = '⏱️ Request timed out after 5 seconds'; } else if (err.name === 'TypeError') { error = '🌐 Network error - check your connection'; } else { error = '❌ ' + err.message; } } finally { loading = false; } })()" :disabled="loading" class="px-3 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 text-sm">
       Timeout
     </button>
-    <button t-click="fetch('network')" :disabled="loading" class="px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 text-sm">
+    <button t-click="(async function(){ loading = true; error = null; errorType = 'network'; try { await fetch('https://invalid-domain-that-does-not-exist-12345.com'); } catch (err) { if (err.name === 'AbortError') { error = '⏱️ Request timed out after 5 seconds'; } else if (err.name === 'TypeError') { error = '🌐 Network error - check your connection'; } else { error = '❌ ' + err.message; } } finally { loading = false; } })()" :disabled="loading" class="px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 text-sm">
       Network
     </button>
-    <button t-click="fetch('404')" :disabled="loading" class="px-3 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 text-sm">
+    <button t-click="(async function(){ loading = true; error = null; errorType = '404'; try { await fetch('https://jsonplaceholder.typicode.com/invalid'); } catch (err) { if (err.name === 'AbortError') { error = '⏱️ Request timed out after 5 seconds'; } else if (err.name === 'TypeError') { error = '🌐 Network error - check your connection'; } else { error = '❌ ' + err.message; } } finally { loading = false; } })()" :disabled="loading" class="px-3 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 text-sm">
       404 Error
     </button>
   </div>
@@ -312,25 +267,8 @@ Add retry button for failed requests:
   error: null,
   loading: false,
   retries: 0,
-  data: null,
-  async fetch() {
-    this.loading = true
-    this.error = null
-    try {
-      // Succeed after 3 attempts
-      if (this.retries < 2) {
-        throw new Error('Request failed. Please try again.')
-      }
-      const res = await fetch('https://jsonplaceholder.typicode.com/todos/1')
-      this.data = await res.json()
-      this.retries = 0
-    } catch (err) {
-      this.error = err.message
-    } finally {
-      this.loading = false
-    }
-  }
-}" t-init="$context.fetch()" class="p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 my-6 space-y-3">
+  data: null
+}" t-init="(async function(){ loading = true; error = null; try { if (retries < 2) { throw new Error('Request failed. Please try again.'); } const res = await fetch('https://jsonplaceholder.typicode.com/todos/1'); data = await res.json(); retries = 0; } catch (err) { error = err.message; } finally { loading = false; } })()" class="p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 my-6 space-y-3">
   <div t-show="loading" class="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded">
     <p class="text-blue-700 dark:text-blue-300">Loading...</p>
   </div>
@@ -342,7 +280,7 @@ Add retry button for failed requests:
         Attempts: <span t-text="retries"></span> of 3
       </p>
     </div>
-    <button t-click="retries++; fetch()" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+    <button t-click="(async function(){ retries++; loading = true; error = null; try { if (retries < 2) { throw new Error('Request failed. Please try again.'); } const res = await fetch('https://jsonplaceholder.typicode.com/todos/1'); data = await res.json(); retries = 0; } catch (err) { error = err.message; } finally { loading = false; } })()" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
       🔄 Retry
     </button>
   </div>
@@ -521,32 +459,13 @@ Show fallback content on error:
 <div t-data="{
   data: null,
   error: null,
-  loading: false,
-  async load(shouldFail) {
-    this.loading = true
-    this.error = null
-    this.data = null
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      if (shouldFail) {
-        throw new Error('Unable to connect to server')
-      }
-      this.data = {
-        title: 'Dashboard',
-        stats: { users: 1234, posts: 567, comments: 8901 }
-      }
-    } catch (err) {
-      this.error = err.message
-    } finally {
-      this.loading = false
-    }
-  }
+  loading: false
 }" class="p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 my-6 space-y-4">
   <div class="flex gap-2">
-    <button t-click="load(false)" :disabled="loading" class="px-4 py-2 bg-pine-600 text-white rounded hover:bg-pine-700 disabled:opacity-50">
+    <button t-click="(async function(){ loading = true; error = null; data = null; try { await new Promise(resolve => setTimeout(resolve, 1000)); data = { title: 'Dashboard', stats: { users: 1234, posts: 567, comments: 8901 } }; } catch (err) { error = err.message; } finally { loading = false; } })()" :disabled="loading" class="px-4 py-2 bg-pine-600 text-white rounded hover:bg-pine-700 disabled:opacity-50">
       Load Successfully
     </button>
-    <button t-click="load(true)" :disabled="loading" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50">
+    <button t-click="(async function(){ loading = true; error = null; data = null; try { await new Promise(resolve => setTimeout(resolve, 1000)); throw new Error('Unable to connect to server'); } catch (err) { error = err.message; } finally { loading = false; } })()" :disabled="loading" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50">
       Load with Error
     </button>
   </div>
