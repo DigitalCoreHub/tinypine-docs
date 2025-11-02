@@ -61,8 +61,8 @@ Fetch a random user from the API and display basic info.
 </div>
 ```
 
-<div t-data="{ user: null, loading: false, error: '', async fetchUser() { this.loading = true; this.error = ''; try { const id = Math.floor(Math.random()*10)+1; const res = await fetch('https://jsonplaceholder.typicode.com/users/' + id); this.user = await res.json(); } catch(e){ this.error = 'Failed to load user'; this.user = null; } finally { this.loading = false; } } }" class="p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 my-6 space-y-3">
-  <button t-click="fetchUser()" class="px-4 py-2 bg-pine-600 text-white rounded-lg hover:bg-pine-700">Get Random User</button>
+<div t-data="{ user: null, loading: false, error: '' }" class="p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 my-6 space-y-3">
+  <button t-click="(async function(){ loading = true; error = ''; try { const id = Math.floor(Math.random()*10)+1; const res = await fetch('https://jsonplaceholder.typicode.com/users/' + id); user = await res.json(); } catch(e){ error = 'Failed to load user'; user = null; } finally { loading = false; } })()" class="px-4 py-2 bg-pine-600 text-white rounded-lg hover:bg-pine-700">Get Random User</button>
   <div t-show="loading" class="text-gray-500 dark:text-gray-400">Loading...</div>
   <div t-show="error" class="text-red-600 dark:text-red-400" t-text="error"></div>
   <div t-show="!loading && user" class="space-y-1">
@@ -145,12 +145,12 @@ Handle fetch errors gracefully:
 </div>
 ```
 
-<div t-data="{ data: null, error: null, loading: false, async fetchOk(){ this.loading = true; this.error = null; this.data = null; try { const res = await fetch('https://jsonplaceholder.typicode.com/todos/1'); if (!res.ok) throw new Error('Failed to fetch data'); this.data = await res.json(); } catch (e) { this.error = e.message; } finally { this.loading = false; } }, async fetchFail(){ this.loading = true; this.error = null; this.data = null; try { const res = await fetch('https://jsonplaceholder.typicode.com/invalid-endpoint'); if (!res.ok) throw new Error('Failed to fetch data'); this.data = await res.json(); } catch (e) { this.error = e.message; } finally { this.loading = false; } } }" class="p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 my-6 space-y-3">
+<div t-data="{ data: null, error: null, loading: false }" class="p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 my-6 space-y-3">
   <div class="flex gap-2">
-    <button t-click="fetchOk()" class="px-4 py-2 bg-pine-600 text-white rounded-lg hover:bg-pine-700">
+    <button t-click="(async function(){ loading = true; error = null; data = null; try { const res = await fetch('https://jsonplaceholder.typicode.com/todos/1'); if (!res.ok) throw new Error('Failed to fetch data'); data = await res.json(); } catch (e) { error = e.message; } finally { loading = false; } })()" class="px-4 py-2 bg-pine-600 text-white rounded-lg hover:bg-pine-700">
       Load Data (Success)
     </button>
-    <button t-click="fetchFail()" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+    <button t-click="(async function(){ loading = true; error = null; data = null; try { const res = await fetch('https://jsonplaceholder.typicode.com/invalid-endpoint'); if (!res.ok) throw new Error('Failed to fetch data'); data = await res.json(); } catch (e) { error = e.message; } finally { loading = false; } })()" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
       Load Data (Error)
     </button>
   </div>
@@ -192,10 +192,10 @@ Send data to an API:
 </div>
 ```
 
-<div t-data="{ title: '', result: null, loading: false, async createPost(){ if (!(this.title && this.title.trim())) return; this.loading = true; try { const res = await fetch('https://jsonplaceholder.typicode.com/posts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title: this.title, body: 'Sample content', userId: 1 }) }); this.result = await res.json(); this.title = ''; } finally { this.loading = false; } } }" class="p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 my-6 space-y-3">
+<div t-data="{ title: '', result: null, loading: false }" class="p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 my-6 space-y-3">
   <div class="flex gap-2">
     <input t-model="title" placeholder="Enter post title..." class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
-    <button t-click="createPost()" t-bind:disabled="loading" class="px-6 py-2 bg-pine-600 text-white rounded-lg hover:bg-pine-700 disabled:opacity-50 disabled:cursor-not-allowed">
+    <button t-click="(async function(){ if (!(title && title.trim())) return; loading = true; try { const res = await fetch('https://jsonplaceholder.typicode.com/posts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title: title, body: 'Sample content', userId: 1 }) }); result = await res.json(); title = ''; } finally { loading = false; } })()" t-bind:disabled="loading" class="px-6 py-2 bg-pine-600 text-white rounded-lg hover:bg-pine-700 disabled:opacity-50 disabled:cursor-not-allowed">
       <span t-show="!loading">Create Post</span>
       <span t-show="loading">Creating...</span>
     </button>

@@ -1,6 +1,6 @@
 # Welcome to TinyPine.js 🌲
 
-**TinyPine.js** is a minimal, reactive JavaScript framework that brings the simplicity of Alpine.js with a tiny footprint and powerful features.
+**TinyPine.js** is a minimal, reactive JavaScript framework with a tiny footprint and powerful features.
 
 ## Why TinyPine?
 

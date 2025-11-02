@@ -54,14 +54,9 @@ The `t-loading` directive shows content only during async operations. It automat
 ```
 
 <div t-data="{
-  loading: false,
-  async fetch() {
-    this.loading = true
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    this.loading = false
-  }
+  loading: false
 }" class="p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 my-6 space-y-3">
-  <button t-click="fetch()" :disabled="loading" class="px-6 py-2 bg-pine-600 text-white rounded-lg hover:bg-pine-700 disabled:opacity-50">
+  <button t-click="(async function(){ loading = true; await new Promise(resolve => setTimeout(resolve, 2000)); loading = false; })()" :disabled="loading" class="px-6 py-2 bg-pine-600 text-white rounded-lg hover:bg-pine-700 disabled:opacity-50">
     Load Data
   </button>
 
